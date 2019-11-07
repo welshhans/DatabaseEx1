@@ -1,0 +1,113 @@
+// Database II	
+// Emily Welshhans	
+// Project 6
+
+// create tables & pk/fk constraints
+
+CREATE TABLE Employee (
+EmployeeID NUMBER(10) PRIMARY KEY,
+FirstName VARCHAR(20) NOT NULL,
+LastName VARCHAR2(20) NOT NULL,
+StreetAddress VARCHAR2(20) NOT NULL,
+City VARCHAR2(20) NOT NULL,
+State VARCHAR2(2) NOT NULL,
+Zip NUMBER(5) NOT NULL,
+BirthDate VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE Project (
+ProjectID NUMBER(10) PRIMARY KEY,
+ProjectName VARCHAR(20) NOT NULL,
+Description VARCHAR(20) NOT NULL,
+StartDate VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE EmployeeProject (
+AssignmentID NUMBER(10) PRIMARY KEY,
+ProjectID NUMBER(10) NOT NULL,
+BillingRate DECIMAL(10,2) NOT NULL,
+CONSTRAINT fk_employee
+FOREIGN KEY (ProjectID)
+REFERENCES Project(ProjectID)
+);
+
+
+// create & use sequences to populate each pk field
+
+CREATE SEQUENCE emp_seq;
+
+CREATE SEQUENCE proj_seq;
+
+// 10 rows of data for each table
+
+INSERT INTO Employee VALUES (emp_seq.NEXTVAL, 'James', 'Smith', '100 N Main St.', 'Columbus', 'OH', '43230', '01-JAN-1970');
+INSERT INTO Employee VALUES (emp_seq.NEXTVAL, 'Mary', 'Johnson', '200 S 1st St.', 'Columbus', 'OH', '43230', '01-FEB-1975');
+INSERT INTO Employee VALUES (emp_seq.NEXTVAL, 'John', 'Williams', '300 E Pear St.', 'Columbus', 'OH', '43230', '28-APR-1989');
+INSERT INTO Employee VALUES (emp_seq.NEXTVAL, 'Patricia', 'Jones', '400 W Kiwi St.', 'Columbus', 'OH', '43230', '01-APR-1990');
+INSERT INTO Employee VALUES (emp_seq.NEXTVAL, 'Robert', 'Brown', '500 N 2nd St.', 'Columbus', 'OH', '43230', '01-JAN-1958');
+INSERT INTO Employee VALUES (emp_seq.NEXTVAL, 'Linda', 'Davis', '600 E 3rd St.', 'Columbus', 'OH', '43230', '24-JUN-1980');
+INSERT INTO Employee VALUES (emp_seq.NEXTVAL, 'Michael', 'Miller', '700 S 4th St.', 'Columbus', 'OH', '43230', '01-JAN-1965');
+INSERT INTO Employee VALUES (emp_seq.NEXTVAL, 'Barbara', 'Wilson', '800 W 5th St.', 'Columbus', 'OH', '43230', '24-APR-1968');
+INSERT INTO Employee VALUES (emp_seq.NEXTVAL, 'William', 'Moore', '900 N Apple St.', 'Columbus', 'OH', '43230', '17-OCT-1982');
+INSERT INTO Employee VALUES (emp_seq.NEXTVAL, 'Elizabeth', 'Taylor', '901 E 6th St.', 'Columbus', 'OH', '43230', '01-NOV-1978');
+
+INSERT INTO Project VALUES (proj_seq.NEXTVAL, 'Apollo', 'The Moon', '01-JAN-1967');
+INSERT INTO Project VALUES (proj_seq.NEXTVAL, 'Barrel', 'Radiation', '01-FEB-2013');
+INSERT INTO Project VALUES (proj_seq.NEXTVAL, 'Calipso', 'Clouds', '28-APR-2006');
+INSERT INTO Project VALUES (proj_seq.NEXTVAL, 'Dart', 'Asteroid', '01-APR-2019');
+INSERT INTO Project VALUES (proj_seq.NEXTVAL, 'Explorer', 'Cosmic Rays', '01-JAN-1958');
+INSERT INTO Project VALUES (proj_seq.NEXTVAL, 'Fuse', 'UV Spec', '24-JUN-1999');
+INSERT INTO Project VALUES (proj_seq.NEXTVAL, 'Gemini', 'Astro Study', '01-JAN-1965');
+INSERT INTO Project VALUES (proj_seq.NEXTVAL, 'Hubble', 'Telescope', '24-APR-1990');
+INSERT INTO Project VALUES (proj_seq.NEXTVAL, 'Integral', 'Gamma-Ray Lab', '17-OCT-2002');
+INSERT INTO Project VALUES (proj_seq.NEXTVAL, 'Juice', 'Jupiter Moons', '01-NOV-2018');
+
+INSERT INTO EmployeeProject VALUES ( 1, 1, 19.50);
+INSERT INTO EmployeeProject VALUES ( 2, 2, 19.50);
+INSERT INTO EmployeeProject VALUES ( 3, 3, 19.50);
+INSERT INTO EmployeeProject VALUES ( 4, 4, 19.50);
+INSERT INTO EmployeeProject VALUES ( 5, 5, 19.50);
+INSERT INTO EmployeeProject VALUES ( 6, 6, 19.50);
+INSERT INTO EmployeeProject VALUES ( 7, 7, 19.50);
+INSERT INTO EmployeeProject VALUES ( 8, 8, 19.50);
+INSERT INTO EmployeeProject VALUES ( 9, 9, 19.50);
+INSERT INTO EmployeeProject VALUES ( 10, 10, 19.50);
+
+// report 1: employee name and dob (heading, date, report name, page #, footer w/ username centered)
+
+SET LINESIZE 90
+SET PAGESIZE 30
+TTITLE LEFT 'Date: ' _DATE CENTER 'Employee Report' RIGHT 'Page ' FORMAT 999 SQL.PNO SKIP 2
+BTITLE CENTER 'Created by ' SQL.USER RIGHT 'Page ' FORMAT 999 SQL.PNO
+COLUMN FirstName HEADING 'First Name'
+COLUMN LastName HEADING 'Last Name'
+COLUMN BirthDate HEADING 'Birthdate'
+SELECT FirstName, LastName, BirthDate
+FROM Employee;
+
+// report 2: project name and description
+
+SET LINESIZE 90
+SET PAGESIZE 30
+TTITLE LEFT 'Date: ' _DATE CENTER 'Employee Report' RIGHT 'Page ' FORMAT 999 SQL.PNO SKIP 2
+BTITLE CENTER 'Created by ' SQL.USER RIGHT 'Page ' FORMAT 999 SQL.PNO
+COLUMN ProjectName HEADING 'Project Name'
+COLUMN Description HEADING 'Description'
+SELECT ProjectName, Description
+FROM Project;
+
+// report 3: employee name, project name, billing rate
+
+SET LINESIZE 90
+SET PAGESIZE 30
+TTITLE LEFT 'Date: ' _DATE CENTER 'Employee Report' RIGHT 'Page ' FORMAT 999 SQL.PNO SKIP 2
+BTITLE CENTER 'Created by ' SQL.USER RIGHT 'Page ' FORMAT 999 SQL.PNO
+COLUMN Employee.FirstName, Employee.LastName HEADING 'Employee Name'
+COLUMN Project.ProjectName HEADING 'Project Name'
+COLUMN EmployeeProject.BillingRate HEADING 'Billing Rate'
+SELECT CONCAT (CONCAT(Employee.FirstName, ' '), Employee.LastName) "Employee Name", Project.ProjectName, EmployeeProject.BillingRate "Billing Rate"
+FROM Employee 
+	INNER JOIN EmployeeProject
+		ON EmployeeProject.AssignmentID = Employee.EmployeeID
+	INNER JOIN Project
+		ON EmployeeProject.ProjectID = Project.ProjectID;
